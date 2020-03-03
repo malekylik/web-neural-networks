@@ -1,0 +1,2 @@
+prod emcc -o main.html -O2 -s "EXPORTED_FUNCTIONS=['_malloc', '_get_network_sizes', '_create_mnist_data', '_create_network', '_feedforward', '_SGD']" -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]'
+dev emcc -o main.html -s "EXPORTED_FUNCTIONS=['_malloc', '_get_network_sizes', '_create_mnist_data', '_create_network', '_feedforward', '_SGD']" -s EXTRA_EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]'

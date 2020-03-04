@@ -1241,11 +1241,11 @@ function updateGlobalBufferAndViews(buf) {
 }
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 5247184,
+    STACK_BASE = 5247296,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 4304,
-    DYNAMIC_BASE = 5247184,
-    DYNAMICTOP_PTR = 4144;
+    STACK_MAX = 4416,
+    DYNAMIC_BASE = 5247296,
+    DYNAMICTOP_PTR = 4256;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1787,7 +1787,7 @@ var ASM_CONSTS = {
 
 
 
-// STATICTOP = STATIC_BASE + 3280;
+// STATICTOP = STATIC_BASE + 3392;
 /* global initializers */  __ATINIT__.push({ func: function() { ___wasm_call_ctors() } });
 
 
@@ -1848,7 +1848,7 @@ var ASM_CONSTS = {
   function ___unlock() {}
 
   
-  var ___tm_formatted=4224;
+  var ___tm_formatted=4336;
   
   
   
@@ -1954,7 +1954,7 @@ var ASM_CONSTS = {
     }
 
   function _emscripten_get_sbrk_ptr() {
-      return 4144;
+      return 4256;
     }
 
   function _emscripten_memcpy_big(dest, src, num) {
@@ -2087,10 +2087,10 @@ var ASM_CONSTS = {
   }
 
   
-  var ___tm_current=4160;
+  var ___tm_current=4272;
   
   
-  var ___tm_timezone=(stringToUTF8("GMT", 4208, 4), 4208);function _localtime_r(time, tmPtr) {
+  var ___tm_timezone=(stringToUTF8("GMT", 4320, 4), 4320);function _localtime_r(time, tmPtr) {
       _tzset();
       var date = new Date(HEAP32[((time)>>2)]*1000);
       HEAP32[((tmPtr)>>2)]=date.getSeconds();
@@ -2321,10 +2321,52 @@ var _create_network = Module["_create_network"] = function() {
   return Module["asm"]["create_network"].apply(null, arguments)
 };
 
+var _set_bias = Module["_set_bias"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["set_bias"].apply(null, arguments)
+};
+
+var _get_network_num_layer = Module["_get_network_num_layer"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["get_network_num_layer"].apply(null, arguments)
+};
+
 var _get_network_sizes = Module["_get_network_sizes"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["get_network_sizes"].apply(null, arguments)
+};
+
+var _get_network_weight = Module["_get_network_weight"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["get_network_weight"].apply(null, arguments)
+};
+
+var _get_column_from_matrix = Module["_get_column_from_matrix"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["get_column_from_matrix"].apply(null, arguments)
+};
+
+var _get_columns_length_from_matrix = Module["_get_columns_length_from_matrix"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["get_columns_length_from_matrix"].apply(null, arguments)
+};
+
+var _get_elements_from_vector = Module["_get_elements_from_vector"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["get_elements_from_vector"].apply(null, arguments)
+};
+
+var _get_elements_length_from_vector = Module["_get_elements_length_from_vector"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["get_elements_length_from_vector"].apply(null, arguments)
 };
 
 var _feedforward = Module["_feedforward"] = function() {

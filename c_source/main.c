@@ -328,8 +328,55 @@ Network* create_network(int* sizes, int length) {
 	return n;
 }
 
+void set_bias(Network* n, float* b, int number, int length) {
+	assert(number < n->num_layers - 1);
+
+	free(n->biases[number]->elements);
+	n->biases[number]->elements = b;
+}
+
+void set_matrix(Network* n, float** b, int number, int column_length) {
+	assert(number < n->num_layers - 1);
+
+	n->weigths[number]->column_length = column_length;
+
+	for (int i = 0; i < n->weigths[number]->column_length; i++) {
+		free(n->weigths[number]->element[i]->elements);
+		n->weigths[number]->element[i]->elements = b[i];
+	}
+}
+
+int get_network_num_layer(Network* n) {
+	return n->num_layers;
+}
+
+
 int* get_network_sizes(Network* n) {
 	return n->sizes;
+}
+
+Matrix* get_network_weight(Network* n, int number) {
+	assert(number < n->num_layers - 1);
+
+	return n->weigths[number];
+}
+
+Vector* get_column_from_matrix(Matrix* m, int number) {
+	assert(number < m->column_length);
+
+	return m->element[number];
+}
+
+int get_columns_length_from_matrix(Matrix* m) {
+	return m->column_length;
+}
+
+float* get_elements_from_vector(Vector* v) {
+	return v->elements;
+}
+
+int get_elements_length_from_vector(Vector* v) {
+	return v->length;
 }
 
 float sigmoid(float z) {

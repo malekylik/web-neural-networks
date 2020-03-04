@@ -23,7 +23,7 @@
 #define LABLES_NUMBER_OFFEST 4
 #define LABELS_VALUE_OFFSET 8
 
-#define min(a, b) a < b ? a : b
+#define min(a, b) (a < b ? a : b)
 #define to_negative_array_index(length, index) (length + index)
 
 #define write_to_debug_file(str) fwrite(str, strlen(str), sizeof(char), fff);
@@ -88,11 +88,11 @@ MNIST_data create_mnist_data(uint8_t* images_buffer, uint8_t* labels_buffer) {
 
 	uint32_t label_number = covert_bytes_to_int(labels_buffer[LABLES_NUMBER_OFFEST + 0], labels_buffer[LABLES_NUMBER_OFFEST + 1], labels_buffer[LABLES_NUMBER_OFFEST + 2], labels_buffer[LABLES_NUMBER_OFFEST + 3]);
 
-	uint32_t data_number = min(image_number, label_number);
+	uint32_t data_number = min(min(image_number, label_number), 100);
 
-	float* images_buffer_f = (float*)malloc(sizeof(float) * image_number * rows_number * columns_number);
+	float* images_buffer_f = (float*)malloc(sizeof(float) * data_number * rows_number * columns_number);
 
-	for (uint32_t i = 0; i < image_number * rows_number * columns_number; i++) {
+	for (uint32_t i = 0; i < data_number * rows_number * columns_number; i++) {
 		uint8_t temp = images_buffer[IMAGES_STRAR_PIXEL_OFFSET + i];
 		float temp2 = temp / 256.0f;
 		images_buffer_f[IMAGES_STRAR_PIXEL_OFFSET + i] = temp2;
@@ -365,6 +365,36 @@ Vector* get_column_from_matrix(Matrix* m, int number) {
 	assert(number < m->column_length);
 
 	return m->element[number];
+}
+
+void set_bias_value(Network* n, int bias_number, int elem,  float number) {
+	assert(bias_number < n->num_layers - 1);
+	assert(elem < n->biases[bias_number]->length);
+
+	n->biases[bias_number]->elements[elem] = number;
+}
+
+float get_bias_value(Network* n, int bias_number, int elem) {
+	assert(bias_number < n->num_layers - 1);
+	assert(elem < n->biases[bias_number]->length);
+
+	return n->biases[bias_number]->elements[elem];
+}
+
+void set_weigth_value(Network* n, int weigth_number, int row_number, int column_number, float number) {
+	assert(weigth_number < n->num_layers - 1);
+	assert(row_number < n->weigths[weigth_number]->column_length);
+	assert(column_number < n->weigths[weigth_number]->element[row_number]->length);
+
+	n->weigths[weigth_number]->element[row_number]->elements[column_number] = number;
+}
+
+float get_weigth_value(Network* n, int weigth_number, int row_number, int column_number) {
+	assert(weigth_number < n->num_layers - 1);
+	assert(row_number < n->weigths[weigth_number]->column_length);
+	assert(column_number < n->weigths[weigth_number]->element[row_number]->length);
+
+	return n->weigths[weigth_number]->element[row_number]->elements[column_number];
 }
 
 int get_columns_length_from_matrix(Matrix* m) {

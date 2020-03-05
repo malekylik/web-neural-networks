@@ -1241,11 +1241,11 @@ function updateGlobalBufferAndViews(buf) {
 }
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 5247584,
+    STACK_BASE = 5247632,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 4704,
-    DYNAMIC_BASE = 5247584,
-    DYNAMICTOP_PTR = 4544;
+    STACK_MAX = 4752,
+    DYNAMIC_BASE = 5247632,
+    DYNAMICTOP_PTR = 4592;
 
 assert(STACK_BASE % 16 === 0, 'stack must start aligned');
 assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
@@ -1255,7 +1255,7 @@ assert(DYNAMIC_BASE % 16 === 0, 'heap must start aligned');
 var TOTAL_STACK = 5242880;
 if (Module['TOTAL_STACK']) assert(TOTAL_STACK === Module['TOTAL_STACK'], 'the stack size can no longer be determined at runtime')
 
-var INITIAL_TOTAL_MEMORY = Module['TOTAL_MEMORY'] || 67108864;if (!Object.getOwnPropertyDescriptor(Module, 'TOTAL_MEMORY')) Object.defineProperty(Module, 'TOTAL_MEMORY', { configurable: true, get: function() { abort('Module.TOTAL_MEMORY has been replaced with plain INITIAL_TOTAL_MEMORY') } });
+var INITIAL_TOTAL_MEMORY = Module['TOTAL_MEMORY'] || 16777216;if (!Object.getOwnPropertyDescriptor(Module, 'TOTAL_MEMORY')) Object.defineProperty(Module, 'TOTAL_MEMORY', { configurable: true, get: function() { abort('Module.TOTAL_MEMORY has been replaced with plain INITIAL_TOTAL_MEMORY') } });
 
 assert(INITIAL_TOTAL_MEMORY >= TOTAL_STACK, 'TOTAL_MEMORY should be larger than TOTAL_STACK, was ' + INITIAL_TOTAL_MEMORY + '! (TOTAL_STACK=' + TOTAL_STACK + ')');
 
@@ -1787,7 +1787,7 @@ var ASM_CONSTS = {
 
 
 
-// STATICTOP = STATIC_BASE + 3680;
+// STATICTOP = STATIC_BASE + 3728;
 /* global initializers */  __ATINIT__.push({ func: function() { ___wasm_call_ctors() } });
 
 
@@ -1852,7 +1852,7 @@ var ASM_CONSTS = {
     }
 
   
-  var ___tm_formatted=4624;
+  var ___tm_formatted=4672;
   
   
   
@@ -1958,7 +1958,7 @@ var ASM_CONSTS = {
     }
 
   function _emscripten_get_sbrk_ptr() {
-      return 4544;
+      return 4592;
     }
 
   function _emscripten_memcpy_big(dest, src, num) {
@@ -2091,10 +2091,10 @@ var ASM_CONSTS = {
   }
 
   
-  var ___tm_current=4560;
+  var ___tm_current=4608;
   
   
-  var ___tm_timezone=(stringToUTF8("GMT", 4608, 4), 4608);function _localtime_r(time, tmPtr) {
+  var ___tm_timezone=(stringToUTF8("GMT", 4656, 4), 4656);function _localtime_r(time, tmPtr) {
       _tzset();
       var date = new Date(HEAP32[((time)>>2)]*1000);
       HEAP32[((tmPtr)>>2)]=date.getSeconds();
@@ -2325,10 +2325,22 @@ var _get_pixel_of_image = Module["_get_pixel_of_image"] = function() {
   return Module["asm"]["get_pixel_of_image"].apply(null, arguments)
 };
 
+var _create_vector = Module["_create_vector"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["create_vector"].apply(null, arguments)
+};
+
 var _free = Module["_free"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["free"].apply(null, arguments)
+};
+
+var _show_vector = Module["_show_vector"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["show_vector"].apply(null, arguments)
 };
 
 var _create_network = Module["_create_network"] = function() {
@@ -2413,6 +2425,18 @@ var _feedforward = Module["_feedforward"] = function() {
   assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
   assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
   return Module["asm"]["feedforward"].apply(null, arguments)
+};
+
+var _set_vector_value = Module["_set_vector_value"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["set_vector_value"].apply(null, arguments)
+};
+
+var _get_max_value_index_in_vector = Module["_get_max_value_index_in_vector"] = function() {
+  assert(runtimeInitialized, 'you need to wait for the runtime to be ready (e.g. wait for main() to be called)');
+  assert(!runtimeExited, 'the runtime was exited (use NO_EXIT_RUNTIME to keep it alive after main() exits)');
+  return Module["asm"]["get_max_value_index_in_vector"].apply(null, arguments)
 };
 
 var _SGD = Module["_SGD"] = function() {

@@ -66,8 +66,12 @@ function putPixel(buffer, x, y, value) {
 
 
 var scale_image = 20;
+var input_data_pointer = null;
 var image_data  = new ImageData(24 * scale_image, 24 * scale_image);
 var input = document.getElementsByClassName('image_number_input')[0];
+var image_indicator = document.getElementsByClassName('images-indicator')[0];
+var image_real_answer = document.getElementsByClassName('images-real-answer')[0];
+var image_network_answer = document.getElementsByClassName('images-network-answer')[0];
 
 function update_image_data(mnist_data, image_number) {
     for (let i = 0; i < 24 * scale_image; i++) {
@@ -93,26 +97,38 @@ Module['onRuntimeInitialized'] = async function () {
     var get_bias_value = Module.cwrap('get_bias_value', 'number', ['number', 'number', 'number']);
     var set_weigth_value = Module.cwrap('set_weigth_value', 'void', ['number', 'number', 'number', 'number', 'number']);
     var get_weigth_value = Module.cwrap('get_weigth_value', 'number', ['number', 'number', 'number', 'number']);
+    var set_vector_value = Module.cwrap('set_vector_value', 'void', ['number', 'number', 'number']);
+    var get_max_value_index_in_vector = Module.cwrap('get_max_value_index_in_vector', 'number', ['number']);
+    var feedforward = Module.cwrap('feedforward', 'number', ['number', 'number']);
+    var create_vector = Module.cwrap('create_vector', 'number', ['number']);
     var malloc = Module.cwrap('malloc', 'number', ['number']);
+    var free = Module.cwrap('free', 'void', ['number']);
+
+    function fill_input_data(data, image_number, input_data_pointer, length) {
+        for (let i = 0; i < length; i++) {
+            set_vector_value(input_data_pointer, i, get_pixel_of_image(data, image_number, i));
+        }
+    }
 
     console.log('config', network_config);
 
     var int_type_size = getNativeTypeSize('i32');
 
     var mnist_data = create_mnist_data(images, labels);
+    image_indicator.innerText = mnist_data.image_number;
 
     var sizes_pointer = malloc(int_type_size * network_config.sizes.length);
 
     network_config.sizes.forEach((size, i) => setValue(sizes_pointer + (int_type_size * i), size, 'i32'));
 
     var network_pointer = Module.ccall('create_network', 'number', ['number', 'number'], [sizes_pointer, 3]);
+    input_data_pointer = create_vector(784);
 
     for (let i = 0; i < network_config.biases.length; i++) {
         for (let j = 0; j < network_config.biases[i].length; j++) {
             set_bias_value(network_pointer, i, j, network_config.biases[i][j]);
         }
     }
-
 
     for (let i = 0; i < network_config.weigths.length; i++) {
         for (let j = 0; j < network_config.weigths[i].length; j++) {
@@ -122,15 +138,26 @@ Module['onRuntimeInitialized'] = async function () {
         }
     }
 
+    fill_input_data(mnist_data, 0, input_data_pointer, 784);
+    var vector_answer = feedforward(network_pointer, input_data_pointer);
+    var answer = get_max_value_index_in_vector(vector_answer);
+    free(vector_answer);
+    image_network_answer.innerText = answer;
+    image_real_answer.innerText = get_label_for_image(mnist_data, 0);
+
     input.addEventListener('change', () => {
         var image_number = Number(input.value);
 
         update_image_data(mnist_data, image_number);
         ctx.putImageData(image_data, 0, 0);
-        console.log('answer', get_label_for_image(mnist_data, image_number));
-    });
+        fill_input_data(mnist_data, image_number, input_data_pointer, 784);
+        var vector_answer = feedforward(network_pointer, input_data_pointer);
+        var answer = get_max_value_index_in_vector(vector_answer);
+        free(vector_answer);
 
-    console.log('answer', get_label_for_image(mnist_data, 0));
+        image_network_answer.innerText = answer;
+        image_real_answer.innerText = get_label_for_image(mnist_data, image_number);
+    });
 
     var ctx = digit_canvas.getContext('2d');
     update_image_data(mnist_data, 0);

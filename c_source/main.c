@@ -444,6 +444,28 @@ Vector* feedforward(Network* n, Vector* a) {
 	return temp;
 }
 
+void set_vector_value(Vector* v, int elem, float number) {
+	assert(elem < v->length);
+
+	v->elements[elem] = number;
+}
+
+int get_max_value_index_in_vector(Vector* v) {
+	if (v->length < 1) return -1;
+
+	int index = 0;
+	float max = v->elements[0];
+
+	for (int i = 1; i < v->length; i++) {
+		if (max < v->elements[i]) {
+			max = v->elements[i];
+			index = i;
+		}
+	}
+
+	return index;
+}
+
 Vector* mat_mult(Matrix* m, Vector* v) {
 	assert(m->row_length == v->length);
 
